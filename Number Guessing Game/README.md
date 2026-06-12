@@ -13,7 +13,16 @@ numgame/
 ├── script.js    → Game logic, audio, leaderboard, confetti
 └── README.md    → You're here
 ```
+## 📸 Screenshots
 
+### Game Start
+![Start](screenshots/start.png)
+
+### Gameplay
+![Gameplay](screenshots/gameplay.png)
+
+### Win Screen
+![Win](screenshots/win.png)
 ---
 
 ## ✨ Features
