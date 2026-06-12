@@ -1,477 +1,509 @@
 /* ================================================================
-   GUESS THE NUMBER — script.js
-   Features: Difficulty levels · Hot-cold meter · Sound effects
-             Score system · Streak tracking · Confetti · Particles
+   NUMGAME — script.js  (fully synced with index.html)
+   ✅ 4-screen flow: Start → Game → Pause → End
+   ✅ Difficulty levels (Easy / Medium / Hard)
+   ✅ Hot-cold meter + narrowing range
+   ✅ Sound effects (Web Audio API — no files)
+   ✅ Confetti on win
+   ✅ Ambient particle background
+   ✅ Score + streak system
+   ✅ localStorage leaderboard (top 10, persisted)
+   ✅ Shake on bad input
+   ✅ Pause / resume / quit to menu
    ================================================================ */
 
-// ── DIFFICULTY CONFIG ──────────────────────────────────────────
-const DIFFICULTIES = {
+'use strict';
+
+// ── DIFFICULTY CONFIG ─────────────────────────────────────────
+const DIFF = {
   easy:   { min: 1,   max: 50,  tries: 12, label: 'Easy',   scoreBase: 100 },
   medium: { min: 1,   max: 100, tries: 10, label: 'Medium', scoreBase: 200 },
   hard:   { min: 1,   max: 200, tries: 8,  label: 'Hard',   scoreBase: 400 },
 };
+const LB_KEY    = 'numgame_leaderboard';
+const LB_MAX    = 10;
 
-// ── DOM REFS ───────────────────────────────────────────────────
-const guessInput     = document.getElementById('guess-input');
-const guessBtn       = document.getElementById('guess-btn');
-const feedbackEl     = document.getElementById('feedback');
-const fbIcon         = document.getElementById('fb-icon');
-const fbText         = document.getElementById('fb-text');
-const historyList    = document.getElementById('history-list');
-const historyWrap    = document.getElementById('history-wrap');
-const historyCount   = document.getElementById('history-count');
-const dotsContainer  = document.getElementById('dots-container');
-const attemptsUsed   = document.getElementById('attempts-used');
-const attemptsTotal  = document.getElementById('attempts-total');
-const gameCard       = document.getElementById('game-card');
-const endScreen      = document.getElementById('end-screen');
-const endIcon        = document.getElementById('end-icon');
-const endTitle       = document.getElementById('end-title');
-const endMsg         = document.getElementById('end-msg');
-const endStats       = document.getElementById('end-stats');
-const restartBtn     = document.getElementById('restart-btn');
-const heatThumb      = document.getElementById('heatbar-thumb');
-const rangeDisplay   = document.getElementById('range-display');
-const scoreVal       = document.getElementById('score-val');
-const bestVal        = document.getElementById('best-val');
-const streakVal      = document.getElementById('streak-val');
-const confettiCanvas = document.getElementById('confetti-canvas');
-const particlesCanvas= document.getElementById('particles-canvas');
+// ── DOM ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
 
-// ── STATE ─────────────────────────────────────────────────────
-let secret, attempts, gameOver, diff;
-let rangeLow, rangeHigh;          // shrinks after each guess
-let totalScore = 0, bestScore = 0, streak = 0;
+// screens
+const screenStart = $('screen-start');
+const screenGame  = $('screen-game');
+const screenPause = $('screen-pause');
+const screenEnd   = $('screen-end');
 
-// ── AUDIO ─────────────────────────────────────────────────────
-const AC = window.AudioContext || window.webkitAudioContext;
-let ac = null;
+// start screen
+const btnStart    = $('btn-start');
+const lbList      = $('lb-list');
+const lbEmpty     = $('lb-empty');
+const lbClear     = $('lb-clear');
 
-function getAC() {
-  if (!ac) ac = new AC();
-  return ac;
+// game screen
+const btnPause    = $('btn-pause');
+const curScore    = $('cur-score');
+const curBest     = $('cur-best');
+const curStreak   = $('cur-streak');
+const diffBadge   = $('diff-badge');
+const dotsRow     = $('dots-row');
+const triesUsed   = $('tries-used');
+const triesTotal  = $('tries-total');
+const heatThumb   = $('heat-thumb');
+const heatWord    = $('heat-word');
+const rangeLowEl  = $('range-low');
+const rangeHighEl = $('range-high');
+const guessInput  = $('guess-input');
+const btnGuess    = $('btn-guess');
+const feedbackBox = $('feedback-box');
+const fbIcon      = $('fb-icon');
+const fbText      = $('fb-text');
+const historyPanel= $('history-panel');
+const histCount   = $('hist-count');
+const histList    = $('history-list');
+
+// pause screen
+const btnResume   = $('btn-resume');
+const btnQuit     = $('btn-quit');
+
+// end screen
+const endIcon     = $('end-icon');
+const endTitle    = $('end-title');
+const endMsg      = $('end-msg');
+const endStats    = $('end-stats');
+const btnPlayAgain= $('btn-play-again');
+const btnMenu     = $('btn-menu');
+
+// canvases
+const bgCanvas      = $('bg-canvas');
+const confettiCanvas= $('confetti-canvas');
+
+// ── SESSION STATE ─────────────────────────────────────────────
+let secret, attempts, gameOver, paused;
+let cfg;                       // current difficulty config
+let rLow, rHigh;               // narrowing range
+let sessionScore = 0;
+let sessionBest  = 0;
+let streak       = 0;
+let currentDiff  = 'medium';
+
+// ── SCREEN ROUTER ─────────────────────────────────────────────
+function showScreen(screen) {
+  [screenStart, screenGame, screenPause, screenEnd].forEach(s => {
+    s.classList.toggle('hidden', s !== screen);
+  });
 }
 
-function playTone(freq, type, duration, vol = 0.18, delay = 0) {
-  try {
-    const ctx = getAC();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type = type;
-    o.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-    g.gain.setValueAtTime(0, ctx.currentTime + delay);
-    g.gain.linearRampToValueAtTime(vol, ctx.currentTime + delay + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
-    o.start(ctx.currentTime + delay);
-    o.stop(ctx.currentTime + delay + duration + 0.05);
-  } catch(e) {}
+// ── LEADERBOARD (localStorage) ────────────────────────────────
+function loadLB() {
+  try { return JSON.parse(localStorage.getItem(LB_KEY)) || []; }
+  catch { return []; }
 }
 
-function soundHigh() { playTone(220, 'sawtooth', 0.15, 0.12); }
-function soundLow()  { playTone(180, 'sawtooth', 0.15, 0.12); }
-function soundWin()  {
-  [523, 659, 784, 1047].forEach((f, i) => playTone(f, 'sine', 0.25, 0.15, i * 0.12));
+function saveLB(entries) {
+  try { localStorage.setItem(LB_KEY, JSON.stringify(entries)); }
+  catch {}
 }
-function soundLose() {
-  [300, 250, 200].forEach((f, i) => playTone(f, 'square', 0.2, 0.1, i * 0.14));
+
+function addToLB(score, diff) {
+  const entries = loadLB();
+  entries.push({ score, diff, date: new Date().toLocaleDateString() });
+  entries.sort((a, b) => b.score - a.score);
+  const trimmed = entries.slice(0, LB_MAX);
+  saveLB(trimmed);
+  return trimmed;
 }
-function soundTick() { playTone(440, 'sine', 0.06, 0.07); }
 
-// ── PARTICLES ─────────────────────────────────────────────────
-(function initParticles() {
-  const cvs = particlesCanvas;
-  const ctx = cvs.getContext('2d');
-  let W, H, pts = [];
-
-  function resize() {
-    W = cvs.width  = window.innerWidth;
-    H = cvs.height = window.innerHeight;
+function renderLB() {
+  const entries = loadLB();
+  lbList.innerHTML = '';
+  if (entries.length === 0) {
+    lbEmpty.classList.remove('hidden');
+    return;
   }
+  lbEmpty.classList.add('hidden');
+  const medals = ['gold', 'silver', 'bronze'];
+  entries.forEach((e, i) => {
+    const li = document.createElement('li');
+    li.className = 'lb-entry';
+    const rankClass = medals[i] || '';
+    li.innerHTML = `
+      <span class="lb-rank ${rankClass}">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`}</span>
+      <span class="lb-name">${e.date}</span>
+      <span class="lb-diff">${e.diff}</span>
+      <span class="lb-score">${e.score}</span>`;
+    lbList.appendChild(li);
+  });
+}
+
+lbClear.addEventListener('click', () => {
+  saveLB([]);
+  renderLB();
+  soundTick();
+});
+
+// ── AUDIO (Web Audio API) ─────────────────────────────────────
+let audioCtx = null;
+function getAC() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function tone(freq, type, dur, vol = 0.15, delay = 0) {
+  try {
+    const ac = getAC();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    o.type = type;
+    o.frequency.setValueAtTime(freq, ac.currentTime + delay);
+    g.gain.setValueAtTime(0, ac.currentTime + delay);
+    g.gain.linearRampToValueAtTime(vol, ac.currentTime + delay + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + delay + dur);
+    o.start(ac.currentTime + delay);
+    o.stop(ac.currentTime + delay + dur + 0.05);
+  } catch {}
+}
+function soundTick()  { tone(440,  'sine',     0.06, 0.07); }
+function soundHigh()  { tone(220,  'sawtooth', 0.15, 0.12); }
+function soundLow()   { tone(160,  'sawtooth', 0.15, 0.12); }
+function soundError() { tone(180,  'square',   0.1,  0.08); }
+function soundWin()   { [523,659,784,1047].forEach((f,i) => tone(f,'sine',0.25,0.15,i*0.12)); }
+function soundLose()  { [300,240,180].forEach((f,i)       => tone(f,'square',0.2,0.1,i*0.14)); }
+
+// ── AMBIENT PARTICLES ─────────────────────────────────────────
+(function particles() {
+  const ctx = bgCanvas.getContext('2d');
+  let W, H, pts = [];
+  const resize = () => { W = bgCanvas.width = innerWidth; H = bgCanvas.height = innerHeight; };
   resize();
   window.addEventListener('resize', resize);
-
-  for (let i = 0; i < 55; i++) {
-    pts.push({
-      x: Math.random() * 1000,
-      y: Math.random() * 1000,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.4 + 0.1,
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < 50; i++) pts.push({
+    x: Math.random()*2000, y: Math.random()*2000,
+    vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22,
+    r: Math.random()*1.4+.4, a: Math.random()*.35+.08,
+  });
+  (function draw() {
+    ctx.clearRect(0,0,W,H);
     pts.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
       ctx.beginPath();
-      ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,245,160,${p.alpha})`;
+      ctx.arc(p.x%W,p.y%H,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,245,160,${p.a})`;
       ctx.fill();
     });
-
-    // connect nearby
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i + 1; j < pts.length; j++) {
-        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        if (d < 110) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(0,245,160,${0.06 * (1 - d/110)})`;
-          ctx.lineWidth = 0.6;
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.stroke();
-        }
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+      const d=Math.hypot(dx,dy);
+      if(d<120){
+        ctx.beginPath();
+        ctx.strokeStyle=`rgba(0,245,160,${.055*(1-d/120)})`;
+        ctx.lineWidth=.5;
+        ctx.moveTo(pts[i].x,pts[i].y);
+        ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.stroke();
       }
     }
     requestAnimationFrame(draw);
-  }
-  draw();
+  })();
 })();
 
 // ── CONFETTI ──────────────────────────────────────────────────
-let confettiPieces = [];
-let confettiRunning = false;
-
+let cPieces=[], cRunning=false;
 function launchConfetti() {
-  const cvs = confettiCanvas;
-  cvs.width  = window.innerWidth;
-  cvs.height = window.innerHeight;
-  confettiPieces = [];
-
-  const colors = ['#00f5a0','#ffb347','#ff4e50','#4fa3e0','#c77dff','#ffe066'];
-  for (let i = 0; i < 130; i++) {
-    confettiPieces.push({
-      x: Math.random() * cvs.width,
-      y: -10 - Math.random() * 80,
-      w: 7 + Math.random() * 7,
-      h: 3 + Math.random() * 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      vx: (Math.random() - 0.5) * 4,
-      vy: 3 + Math.random() * 4,
-      rot: Math.random() * Math.PI * 2,
-      vr: (Math.random() - 0.5) * 0.18,
-      alpha: 1,
-    });
-  }
-
-  if (!confettiRunning) {
-    confettiRunning = true;
-    animateConfetti();
-  }
+  confettiCanvas.width=innerWidth; confettiCanvas.height=innerHeight;
+  const cols=['#00f5a0','#ffb347','#ff4e50','#4fa3e0','#c77dff','#ffe066'];
+  cPieces=[];
+  for(let i=0;i<150;i++) cPieces.push({
+    x:Math.random()*confettiCanvas.width, y:-10-Math.random()*80,
+    w:6+Math.random()*8, h:3+Math.random()*4,
+    color:cols[Math.floor(Math.random()*cols.length)],
+    vx:(Math.random()-.5)*4.5, vy:3+Math.random()*4.5,
+    rot:Math.random()*Math.PI*2, vr:(Math.random()-.5)*.18, a:1,
+  });
+  if(!cRunning){ cRunning=true; animateConfetti(); }
 }
-
 function animateConfetti() {
-  const cvs = confettiCanvas;
-  const ctx = cvs.getContext('2d');
-  ctx.clearRect(0, 0, cvs.width, cvs.height);
-
-  confettiPieces = confettiPieces.filter(p => p.alpha > 0.02);
-
-  confettiPieces.forEach(p => {
-    p.x += p.vx; p.y += p.vy; p.rot += p.vr;
-    if (p.y > cvs.height * 0.7) p.alpha -= 0.02;
-    ctx.save();
-    ctx.globalAlpha = p.alpha;
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+  const ctx=confettiCanvas.getContext('2d');
+  ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  cPieces=cPieces.filter(p=>p.a>.02);
+  cPieces.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+    if(p.y>confettiCanvas.height*.72) p.a-=.022;
+    ctx.save(); ctx.globalAlpha=p.a;
+    ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
     ctx.restore();
   });
-
-  if (confettiPieces.length > 0) {
-    requestAnimationFrame(animateConfetti);
-  } else {
-    confettiRunning = false;
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
-  }
+  if(cPieces.length) requestAnimationFrame(animateConfetti);
+  else { cRunning=false; ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); }
 }
 
-// ── DIFFICULTY ────────────────────────────────────────────────
-let currentDiff = 'medium';
-
+// ── DIFFICULTY BUTTONS (start screen) ────────────────────────
 document.querySelectorAll('.diff-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentDiff = btn.dataset.diff;
-    initGame();
+    soundTick();
   });
 });
 
-// ── INIT ──────────────────────────────────────────────────────
-function initGame() {
-  diff      = DIFFICULTIES[currentDiff];
-  secret    = Math.floor(Math.random() * (diff.max - diff.min + 1)) + diff.min;
+// ── START GAME ────────────────────────────────────────────────
+btnStart.addEventListener('click', () => { soundTick(); startGame(); });
+
+function startGame() {
+  cfg       = DIFF[currentDiff];
+  secret    = Math.floor(Math.random()*(cfg.max-cfg.min+1))+cfg.min;
   attempts  = 0;
   gameOver  = false;
-  rangeLow  = diff.min;
-  rangeHigh = diff.max;
+  paused    = false;
+  rLow      = cfg.min;
+  rHigh     = cfg.max;
 
+  // topbar
+  curScore.textContent  = sessionScore;
+  curBest.textContent   = sessionBest;
+  curStreak.textContent = streak+'🔥';
+  diffBadge.textContent = cfg.label;
+  diffBadge.className   = `diff-badge ${currentDiff}`;
+
+  // tries
+  triesUsed.textContent  = 0;
+  triesTotal.textContent = cfg.tries;
+
+  // input
   guessInput.value    = '';
   guessInput.disabled = false;
-  guessBtn.disabled   = false;
-  guessInput.min      = diff.min;
-  guessInput.max      = diff.max;
+  guessInput.min      = cfg.min;
+  guessInput.max      = cfg.max;
+  btnGuess.disabled   = false;
 
-  historyList.innerHTML = '';
-  historyWrap.style.display = 'none';
+  // heat
+  setHeat(0.5);
 
-  attemptsUsed.textContent  = 0;
-  attemptsTotal.textContent = diff.tries;
+  // range
+  setRange(cfg.min, cfg.max);
 
-  setFeedback('', '💡', `Pick a number between ${diff.min} and ${diff.max}.`);
-  updateRange();
-  updateHeat(0.5);            // start thumb in middle
+  // feedback
+  setFeedback('', '💡', `Pick a number between ${cfg.min} and ${cfg.max}.`);
+
+  // dots
   buildDots();
 
-  gameCard.className = 'card';
-  gameCard.style.display = '';
-  endScreen.classList.add('hidden');
+  // history
+  histList.innerHTML='';
+  historyPanel.style.display='none';
 
-  guessInput.focus();
+  showScreen(screenGame);
+  setTimeout(()=>guessInput.focus(), 80);
 }
 
 function buildDots() {
-  dotsContainer.innerHTML = '';
-  for (let i = 0; i < diff.tries; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot';
-    d.id = `dot-${i}`;
-    dotsContainer.appendChild(d);
+  dotsRow.innerHTML='';
+  for(let i=0;i<cfg.tries;i++){
+    const d=document.createElement('div');
+    d.className='dot'; d.id=`dot-${i}`;
+    dotsRow.appendChild(d);
   }
 }
 
 // ── HEAT METER ────────────────────────────────────────────────
-function updateHeat(pct) {
-  // pct 0 = ice cold, 1 = burning hot
-  const clamped = Math.max(0, Math.min(1, pct));
-  heatThumb.style.left = `${clamped * 100}%`;
-
-  // colour thumb
-  if (clamped > 0.75)      heatThumb.style.background = '#ff4e50';
-  else if (clamped > 0.5)  heatThumb.style.background = '#fc913a';
-  else if (clamped > 0.25) heatThumb.style.background = '#7eb8f7';
-  else                     heatThumb.style.background = '#4fa3e0';
+function calcHeat(guess) {
+  const dist = Math.abs(guess-secret);
+  return Math.max(0, Math.min(1, 1-(dist/(cfg.max-cfg.min))));
 }
-
-function calcHeatPct(guess) {
-  // distance as % of full range
-  const range = diff.max - diff.min;
-  const dist  = Math.abs(guess - secret);
-  const pct   = 1 - (dist / range);   // closer = hotter
-  return Math.max(0, Math.min(1, pct));
+function setHeat(pct) {
+  heatThumb.style.left = `${pct*100}%`;
+  if     (pct>.80){ heatThumb.style.background='#ff4e50'; heatWord.style.color='#ff4e50'; heatWord.textContent='Burning 🔥'; }
+  else if(pct>.60){ heatThumb.style.background='#fc913a'; heatWord.style.color='#fc913a'; heatWord.textContent='Warm'; }
+  else if(pct>.40){ heatThumb.style.background='#9b79e0'; heatWord.style.color='#9b79e0'; heatWord.textContent='Lukewarm'; }
+  else if(pct>.20){ heatThumb.style.background='#74b9ff'; heatWord.style.color='#74b9ff'; heatWord.textContent='Cold'; }
+  else            { heatThumb.style.background='#4fa3e0'; heatWord.style.color='#4fa3e0'; heatWord.textContent='Freezing ❄️'; }
 }
 
 // ── RANGE ─────────────────────────────────────────────────────
-function updateRange() {
-  rangeDisplay.textContent = `${rangeLow} – ${rangeHigh}`;
-  // bounce animation
-  rangeDisplay.style.animation = 'none';
-  rangeDisplay.offsetHeight;
-  rangeDisplay.style.animation = 'bounceNum 0.3s ease';
+function setRange(lo, hi) {
+  rangeLowEl.textContent  = lo;
+  rangeHighEl.textContent = hi;
+  [rangeLowEl, rangeHighEl].forEach(el => {
+    el.style.animation='none'; el.offsetHeight;
+    el.style.animation='rangeFlash .3s ease';
+  });
 }
 
-// ── SCORE ─────────────────────────────────────────────────────
-function calcScore(triesLeft) {
-  const base    = diff.scoreBase;
-  const bonus   = triesLeft * 15;
-  const streakB = streak * 25;
-  return base + bonus + streakB;
+// ── FEEDBACK ──────────────────────────────────────────────────
+function setFeedback(cls, icon, text) {
+  feedbackBox.className = `feedback-box ${cls}`;
+  fbIcon.textContent    = icon;
+  fbText.textContent    = text;
 }
 
-function popScore(el) {
-  el.classList.remove('pop');
-  el.offsetHeight;
-  el.classList.add('pop');
-  el.addEventListener('animationend', () => el.classList.remove('pop'), { once: true });
+// ── HISTORY ───────────────────────────────────────────────────
+function addHistory(num, cls, hint, heat) {
+  historyPanel.style.display='';
+  const li=document.createElement('li');
+  li.className=`hi ${cls}`;
+  li.innerHTML=`
+    <span class="hi-num">${num}</span>
+    <div class="hi-bar"><div class="hi-fill" style="width:${Math.round(heat*100)}%"></div></div>
+    <span class="hi-hint">${hint}</span>`;
+  histList.prepend(li);
+  histCount.textContent=`${attempts} guess${attempts!==1?'es':''}`;
 }
 
-// ── MAIN GUESS ────────────────────────────────────────────────
+// ── SCORE POP ─────────────────────────────────────────────────
+function popEl(el) {
+  el.classList.remove('pop'); el.offsetHeight; el.classList.add('pop');
+  el.addEventListener('animationend',()=>el.classList.remove('pop'),{once:true});
+}
+
+// ── MAIN GUESS HANDLER ────────────────────────────────────────
 function handleGuess() {
-  if (gameOver) return;
-  soundTick();
+  if(gameOver||paused) return;
+  const raw=guessInput.value.trim();
+  const val=parseInt(raw,10);
 
-  const raw = guessInput.value.trim();
-  const val = parseInt(raw, 10);
-
-  if (!raw || isNaN(val) || val < diff.min || val > diff.max) {
+  // validation
+  if(!raw||isNaN(val)||val<cfg.min||val>cfg.max){
+    soundError();
     guessInput.classList.add('shake');
-    guessInput.addEventListener('animationend', () => guessInput.classList.remove('shake'), { once: true });
-    setFeedback('', '⚠️', `Please enter a number between ${diff.min} and ${diff.max}.`);
+    guessInput.addEventListener('animationend',()=>guessInput.classList.remove('shake'),{once:true});
+    setFeedback('','⚠️',`Enter a number between ${cfg.min} and ${cfg.max}.`);
     return;
   }
 
+  soundTick();
   attempts++;
-  attemptsUsed.textContent = attempts;
-  const remaining = diff.tries - attempts;
-  const heat = calcHeatPct(val);
-  updateHeat(heat);
+  triesUsed.textContent=attempts;
+  const left=cfg.tries-attempts;
+  const heat=calcHeat(val);
+  setHeat(heat);
+  const dot=$(`dot-${attempts-1}`);
 
-  const dot = document.getElementById(`dot-${attempts - 1}`);
+  if(val===secret){
+    // ── WIN
+    dot.className='dot d-win';
+    addHistory(val,'hi-win','🎯 Correct!',1);
+    setFeedback('fb-win','🎯',`Correct! The number was ${secret}.`);
+    endWin();
 
-  if (val === secret) {
-    dot.className = 'dot d-win';
-    addHistory(val, 'hi-win', '🎯 Correct!', 1);
-    setFeedback('fb-win', '🎯', `Correct! The number was ${secret}.`);
-    gameCard.className = 'card state-win';
-    endGameWin();
-
-  } else if (val > secret) {
-    dot.className = 'dot d-high';
-    rangeLow  = rangeLow;    // low bound unchanged
-    rangeHigh = Math.min(rangeHigh, val - 1);
-    updateRange();
-
-    const hot = heat > 0.7 ? '🔥 Very close!' : heat > 0.45 ? '📍 Getting warmer.' : '❄️ Way too high.';
-    const left = remaining > 0 ? ` ${remaining} left.` : '';
-    addHistory(val, 'hi-high', '↓ Too high', heat);
-    setFeedback('fb-high', '🔻', `Too high! ${hot}${left}`);
-    gameCard.className = 'card state-high';
+  } else if(val>secret){
+    // ── TOO HIGH
+    dot.className='dot d-high';
+    rHigh=Math.min(rHigh,val-1);
+    setRange(rLow,rHigh);
+    const hot=heat>.78?'🔥 So close!':heat>.5?'📍 Getting warmer.':'❄️ Way too high.';
+    addHistory(val,'hi-high','↓ Too high',heat);
+    setFeedback('fb-high','🔻',`Too high! ${hot}${left>0?` ${left} left.`:''}`);
     soundHigh();
 
   } else {
-    dot.className = 'dot d-low';
-    rangeLow  = Math.max(rangeLow, val + 1);
-    updateRange();
-
-    const hot = heat > 0.7 ? '🔥 Very close!' : heat > 0.45 ? '📍 Getting warmer.' : '❄️ Way too low.';
-    const left = remaining > 0 ? ` ${remaining} left.` : '';
-    addHistory(val, 'hi-low', '↑ Too low', heat);
-    setFeedback('fb-low', '🔺', `Too low! ${hot}${left}`);
-    gameCard.className = 'card state-low';
+    // ── TOO LOW
+    dot.className='dot d-low';
+    rLow=Math.max(rLow,val+1);
+    setRange(rLow,rHigh);
+    const hot=heat>.78?'🔥 So close!':heat>.5?'📍 Getting warmer.':'❄️ Way too low.';
+    addHistory(val,'hi-low','↑ Too low',heat);
+    setFeedback('fb-low','🔺',`Too low! ${hot}${left>0?` ${left} left.`:''}`);
     soundLow();
   }
 
-  guessInput.value = '';
+  guessInput.value='';
   guessInput.focus();
-
-  if (attempts >= diff.tries && val !== secret) {
-    endGameLose();
-  }
+  if(attempts>=cfg.tries&&val!==secret) endLose();
 }
 
-// ── END WIN ───────────────────────────────────────────────────
-function endGameWin() {
-  gameOver = true;
-  guessInput.disabled = true;
-  guessBtn.disabled   = true;
+// ── WIN ───────────────────────────────────────────────────────
+function endWin() {
+  gameOver=true;
+  guessInput.disabled=true; btnGuess.disabled=true;
+  soundWin(); launchConfetti();
 
-  const triesLeft = diff.tries - attempts;
-  const earned    = calcScore(triesLeft);
-  totalScore     += earned;
-  streak         += 1;
-  if (totalScore > bestScore) bestScore = totalScore;
+  const trLeft   = cfg.tries-attempts;
+  const earned   = cfg.scoreBase + trLeft*15 + streak*25;
+  sessionScore  += earned;
+  streak        += 1;
+  if(sessionScore>sessionBest) sessionBest=sessionScore;
 
-  scoreVal.textContent  = totalScore;
-  bestVal.textContent   = bestScore;
-  streakVal.textContent = streak + '🔥';
-  popScore(scoreVal);
-  popScore(streakVal);
+  curScore.textContent  = sessionScore;
+  curBest.textContent   = sessionBest;
+  curStreak.textContent = streak+'🔥';
+  popEl(curScore); popEl(curStreak);
 
-  soundWin();
-  launchConfetti();
+  // save to leaderboard
+  addToLB(sessionScore, cfg.label);
 
-  setTimeout(() => {
-    gameCard.style.display = 'none';
-    endScreen.classList.remove('hidden');
-    endScreen.style.borderColor = 'var(--neon)';
-    endIcon.textContent = attempts === 1 ? '🧠' : attempts <= 3 ? '🏆' : '🎉';
-    endTitle.textContent = attempts === 1 ? 'Mind Reader!' : attempts <= 3 ? 'Brilliant!' : 'You got it!';
-    endTitle.className = 'end-title win-t';
+  const comment = attempts===1?'First try — unreal!':attempts<=3?'Cracked it fast!':attempts<=6?'Solid work!':'Squeaked it out!';
+  const icon    = attempts===1?'🧠':attempts<=3?'🏆':'🎉';
 
-    const comment = attempts === 1 ? 'First try. Absolutely unreal.'
-      : attempts <= 3 ? 'Solved it fast — top notch!'
-      : attempts <= 6 ? 'Solid performance!'
-      : 'Close call, but you made it!';
-
-    endMsg.innerHTML = `The number was <strong>${secret}</strong>. ${comment}`;
-
-    endStats.innerHTML = `
-      <div class="stat-chip">
-        <span class="sc-label">Guesses</span>
-        <span class="sc-val">${attempts} / ${diff.tries}</span>
-      </div>
-      <div class="stat-chip">
-        <span class="sc-label">Points</span>
-        <span class="sc-val">+${earned}</span>
-      </div>
-      <div class="stat-chip">
-        <span class="sc-label">Streak</span>
-        <span class="sc-val">${streak}🔥</span>
-      </div>
-      <div class="stat-chip">
-        <span class="sc-label">Difficulty</span>
-        <span class="sc-val">${diff.label}</span>
-      </div>`;
-  }, 700);
+  setTimeout(()=>{
+    endIcon.textContent  = icon;
+    endTitle.textContent = attempts===1?'Mind Reader!':attempts<=3?'Brilliant!':'You got it!';
+    endTitle.className   = 'end-title win-t';
+    endMsg.innerHTML     = `The number was <strong>${secret}</strong>. ${comment}`;
+    endStats.innerHTML   = statChip('Guesses',`${attempts}/${cfg.tries}`)
+                         + statChip('Points', `+${earned}`)
+                         + statChip('Streak',  `${streak}🔥`)
+                         + statChip('Level',   cfg.label);
+    showScreen(screenEnd);
+  }, 750);
 }
 
-// ── END LOSE ──────────────────────────────────────────────────
-function endGameLose() {
-  gameOver = true;
-  guessInput.disabled = true;
-  guessBtn.disabled   = true;
-  streak = 0;
-  streakVal.textContent = '0🔥';
-
+// ── LOSE ──────────────────────────────────────────────────────
+function endLose() {
+  gameOver=true;
+  guessInput.disabled=true; btnGuess.disabled=true;
+  streak=0; curStreak.textContent='0🔥';
   soundLose();
 
-  setTimeout(() => {
-    gameCard.style.display = 'none';
-    endScreen.classList.remove('hidden');
-    endScreen.style.borderColor = 'var(--lose)';
+  setTimeout(()=>{
     endIcon.textContent  = '💀';
     endTitle.textContent = 'Out of Guesses';
     endTitle.className   = 'end-title lose-t';
     endMsg.innerHTML     = `The number was <strong>${secret}</strong>. Better luck next round!`;
-    endStats.innerHTML   = `
-      <div class="stat-chip">
-        <span class="sc-label">The Answer</span>
-        <span class="sc-val">${secret}</span>
-      </div>
-      <div class="stat-chip">
-        <span class="sc-label">Difficulty</span>
-        <span class="sc-val">${diff.label}</span>
-      </div>
-      <div class="stat-chip">
-        <span class="sc-label">Streak</span>
-        <span class="sc-val">💔 Reset</span>
-      </div>`;
-  }, 600);
+    endStats.innerHTML   = statChip('Answer',  secret)
+                         + statChip('Level',   cfg.label)
+                         + statChip('Streak',  '💔 Reset');
+    showScreen(screenEnd);
+  }, 650);
 }
 
-// ── HISTORY ───────────────────────────────────────────────────
-function addHistory(num, type, hint, heatPct) {
-  historyWrap.style.display = '';
-  const li = document.createElement('li');
-  li.className = `history-item ${type}`;
-  const barW = Math.round(heatPct * 100);
-  li.innerHTML = `
-    <span class="h-num">${num}</span>
-    <div class="h-bar"><div class="h-bar-fill" style="width:${barW}%"></div></div>
-    <span class="h-hint">${hint}</span>`;
-  historyList.prepend(li);
-  historyCount.textContent = `${attempts} guess${attempts !== 1 ? 'es' : ''}`;
+function statChip(label,val){
+  return `<div class="stat-chip"><span class="sc-label">${label}</span><span class="sc-val">${val}</span></div>`;
 }
 
-// ── FEEDBACK ─────────────────────────────────────────────────
-function setFeedback(cls, icon, text) {
-  feedbackEl.className = `feedback ${cls}`;
-  fbIcon.textContent   = icon;
-  fbText.textContent   = text;
-}
+// ── PAUSE ─────────────────────────────────────────────────────
+btnPause.addEventListener('click', ()=>{ if(!gameOver){ paused=true; soundTick(); showScreen(screenPause); }});
+btnResume.addEventListener('click', ()=>{ paused=false; soundTick(); showScreen(screenGame); guessInput.focus(); });
+btnQuit.addEventListener('click', ()=>{
+  paused=false; gameOver=true; soundTick();
+  renderLB();
+  showScreen(screenStart);
+});
 
-// ── EVENTS ────────────────────────────────────────────────────
-guessBtn.addEventListener('click', handleGuess);
-guessInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleGuess(); });
-restartBtn.addEventListener('click', initGame);
+// ── END SCREEN BUTTONS ────────────────────────────────────────
+btnPlayAgain.addEventListener('click', ()=>{ soundTick(); startGame(); });
+btnMenu.addEventListener('click', ()=>{ soundTick(); renderLB(); showScreen(screenStart); });
 
-// ── KICK OFF ─────────────────────────────────────────────────
-initGame();
+// ── KEYBOARD ─────────────────────────────────────────────────
+btnGuess.addEventListener('click', handleGuess);
+guessInput.addEventListener('keydown', e=>{ if(e.key==='Enter') handleGuess(); });
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    if(!screenPause.classList.contains('hidden')){ btnResume.click(); }
+    else if(!screenGame.classList.contains('hidden')&&!gameOver){ btnPause.click(); }
+  }
+});
+
+// ── INJECT RANGE FLASH KEYFRAME ───────────────────────────────
+const ks=document.createElement('style');
+ks.textContent=`
+@keyframes rangeFlash {
+  0%   { color: var(--neon); transform: scale(1.15); }
+  100% { color: var(--neon); transform: scale(1); }
+}`;
+document.head.appendChild(ks);
+
+// ── INIT ──────────────────────────────────────────────────────
+renderLB();
+showScreen(screenStart);

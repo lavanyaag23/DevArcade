@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>NUMGAME · Guess the Number</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- Ambient canvas -->
+  <canvas id="bg-canvas"></canvas>
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ══════════════════════════════════
+       SCREEN 1 — START SCREEN
+  ══════════════════════════════════ -->
+  <div class="screen" id="screen-start">
+    <div class="start-inner">
+      <div class="start-logo">
+        <span class="logo-bracket">[</span>NUM<span class="logo-bracket">]</span>
+      </div>
+      <h1 class="start-title">Guess<br/><em>the Number</em></h1>
+      <p class="start-sub">A number is hidden. Use hints to close in.<br/>Fewer guesses = more points.</p>
+
+      <!-- Difficulty pick -->
+      <div class="diff-group">
+        <p class="diff-heading">Choose difficulty</p>
+        <div class="diff-row">
+          <button class="diff-btn" data-diff="easy">
+            <span class="diff-name">Easy</span>
+            <span class="diff-info">1–50 · 12 tries</span>
+          </button>
+          <button class="diff-btn active" data-diff="medium">
+            <span class="diff-name">Medium</span>
+            <span class="diff-info">1–100 · 10 tries</span>
+          </button>
+          <button class="diff-btn" data-diff="hard">
+            <span class="diff-name">Hard</span>
+            <span class="diff-info">1–200 · 8 tries</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-start" id="btn-start">▶ Start Game</button>
+
+      <!-- Leaderboard -->
+      <div class="lb-box" id="lb-box">
+        <div class="lb-header">
+          <span>🏅 Leaderboard</span>
+          <button class="lb-clear-btn" id="lb-clear">Clear</button>
+        </div>
+        <ul class="lb-list" id="lb-list"></ul>
+        <p class="lb-empty hidden" id="lb-empty">No scores yet. Play to set one!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 2 — GAME SCREEN
+  ══════════════════════════════════ -->
+  <div class="screen hidden" id="screen-game">
+    <div class="game-wrap">
+
+      <!-- Top bar -->
+      <div class="topbar">
+        <button class="btn-icon" id="btn-pause" title="Pause">⏸</button>
+        <div class="topbar-scores">
+          <div class="mini-score"><span class="ms-label">Score</span><span class="ms-val" id="cur-score">0</span></div>
+          <div class="mini-score"><span class="ms-label">Best</span><span class="ms-val" id="cur-best">0</span></div>
+          <div class="mini-score streak-chip"><span class="ms-label">Streak</span><span class="ms-val" id="cur-streak">0🔥</span></div>
+        </div>
+        <div class="diff-badge" id="diff-badge">Medium</div>
+      </div>
+
+      <!-- Attempt dots -->
+      <div class="attempt-bar">
+        <div class="dots-row" id="dots-row"></div>
+        <span class="tries-label"><span id="tries-used">0</span>/<span id="tries-total">10</span></span>
+      </div>
+
+      <!-- Heat meter -->
+      <div class="heat-row">
+        <span class="heat-end cold-lbl">❄️</span>
+        <div class="heat-track">
+          <div class="heat-thumb" id="heat-thumb"></div>
+        </div>
+        <span class="heat-end hot-lbl">🔥</span>
+        <span class="heat-word" id="heat-word">—</span>
+      </div>
+
+      <!-- Range pill -->
+      <div class="range-pill">
+        <span class="range-arrow" id="range-low">1</span>
+        <span class="range-sep">···</span>
+        <span class="range-arrow" id="range-high">100</span>
+      </div>
+
+      <!-- Input -->
+      <div class="input-zone">
+        <input type="number" id="guess-input" class="guess-input" placeholder="?" autocomplete="off"/>
+        <button class="btn-guess" id="btn-guess">Guess</button>
+      </div>
+
+      <!-- Feedback -->
+      <div class="feedback-box" id="feedback-box">
+        <span class="fb-icon" id="fb-icon">💡</span>
+        <span class="fb-text" id="fb-text">Enter a number and press Guess.</span>
+      </div>
+
+      <!-- History -->
+      <div class="history-panel" id="history-panel" style="display:none">
+        <div class="history-hdr">
+          <span>Guess history</span><span id="hist-count"></span>
+        </div>
+        <ul class="history-list" id="history-list"></ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 3 — PAUSE SCREEN
+  ══════════════════════════════════ -->
+  <div class="screen hidden overlay-screen" id="screen-pause">
+    <div class="modal">
+      <div class="modal-title">⏸ Paused</div>
+      <p class="modal-sub">Take your time.</p>
+      <div class="modal-actions">
+        <button class="btn-modal-primary" id="btn-resume">▶ Resume</button>
+        <button class="btn-modal-ghost" id="btn-quit">↩ Quit to Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SCREEN 4 — END SCREEN
+  ══════════════════════════════════ -->
+  <div class="screen hidden overlay-screen" id="screen-end">
+    <div class="modal end-modal">
+      <div class="end-icon" id="end-icon"></div>
+      <h2 class="end-title" id="end-title"></h2>
+      <p class="end-msg" id="end-msg"></p>
+      <div class="end-stats" id="end-stats"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-primary" id="btn-play-again">▶ Play Again</button>
+        <button class="btn-modal-ghost" id="btn-menu">↩ Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
