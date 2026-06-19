@@ -40,7 +40,6 @@ Each game is built from scratch to practice:
 | 🐍 Snake Game           | Arcade    | 🚧 In Development |
 | 🧠 Memory Card Game     | Memory    | ⏳ Planned         |
 | ⚡ Whack-A-Mole          | Reaction  | ⏳ Planned         |
-| 🎲 Tic Tac Toe          | Strategy  | ⏳ Planned         |
 | 🎮 2048 Game            | Logic     | ⏳ Planned         |
 | 🧩 Sudoku Solver        | Algorithm | ⏳ Planned         |
 | 📝 Quiz Game            | MCQ Logic | ⏳ Planned         |
@@ -82,7 +81,6 @@ Each game is built from scratch to practice:
 ### Phase 2
 
 * Memory Card Game
-* Tic Tac Toe
 * Whack-A-Mole
 
 ### Phase 3
