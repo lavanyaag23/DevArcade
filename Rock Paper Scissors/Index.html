@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Paper Scissors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="card">
+    <header>
+      <h1>⚔ Rock Paper Scissors</h1>
+      <p class="subtitle">Pick your weapon, challenger</p>
+    </header>
+
+    <div class="arena">
+      <div class="combatant">
+        <div class="choice-display" id="playerDisplay">❔</div>
+        <span class="label">You</span>
+      </div>
+      <div class="vs">VS</div>
+      <div class="combatant">
+        <div class="choice-display" id="computerDisplay">❔</div>
+        <span class="label">Computer</span>
+      </div>
+    </div>
+
+    <div class="result-banner" id="resultBanner">Make your move</div>
+
+    <div class="choices">
+      <button class="choice-btn" data-choice="rock"><span class="icon">🪨</span><span>Rock</span></button>
+      <button class="choice-btn" data-choice="paper"><span class="icon">📄</span><span>Paper</span></button>
+      <button class="choice-btn" data-choice="scissors"><span class="icon">✂️</span><span>Scissors</span></button>
+    </div>
+
+    <div class="scoreboard">
+      <div class="score-item">
+        <span class="score-label">You</span>
+        <span class="score-value" id="playerScore">0</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="score-label">Ties</span>
+        <span class="score-value" id="tieScore">0</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="score-label">CPU</span>
+        <span class="score-value" id="computerScore">0</span>
+      </div>
+    </div>
+
+    <div class="streak" id="streakDisplay"></div>
+
+    <button class="reset-btn" id="resetBtn">Reset Match</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
