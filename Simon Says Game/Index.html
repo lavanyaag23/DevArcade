@@ -1,25 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simon Says</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simon Says</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>🎵 Simon Says</h1>
-    <h2 id="level">Press Start</h2>
+<div class="app">
+  <div class="panel">
+    <header>
+      <h1>🎵 Simon Says</h1>
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-label">Level</span>
+          <span class="stat-value" id="levelStat">1</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Best</span>
+          <span class="stat-value" id="bestStat">--</span>
+        </div>
+      </div>
+    </header>
 
-    <button onclick="startGame()">Start Game</button>
+    <p class="status-text" id="statusText">Press start to begin</p>
 
-    <div class="container">
-        <div class="btn red" id="red"></div>
-        <div class="btn green" id="green"></div>
-        <div class="btn blue" id="blue"></div>
-        <div class="btn yellow" id="yellow"></div>
+    <button class="primary-btn full-width" id="startBtn">Start Game</button>
+
+    <div class="pad-grid" id="padGrid">
+      <div class="center-badge" id="centerBadge">1</div>
+      <button class="pad red" data-color="red" title="Red pad" aria-label="Red"></button>
+      <button class="pad green" data-color="green" title="Green pad" aria-label="Green"></button>
+      <button class="pad blue" data-color="blue" title="Blue pad" aria-label="Blue"></button>
+      <button class="pad yellow" data-color="yellow" title="Yellow pad" aria-label="Yellow"></button>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <div class="win-overlay hidden" id="endOverlay">
+    <div class="win-modal">
+      <h2>Game Over</h2>
+      <p>Level Reached: <span id="finalLevel">1</span></p>
+      <p class="best-tag hidden" id="newBestTag">🏆 New Best!</p>
+      <button class="primary-btn" id="playAgainBtn">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
