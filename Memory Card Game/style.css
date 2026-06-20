@@ -1,0 +1,42 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#111;
+    color:white;
+}
+
+.container{
+    text-align:center;
+}
+
+.game-board{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(4,80px);
+    gap:10px;
+}
+
+.card{
+    width:80px;
+    height:80px;
+    background:#444;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:2rem;
+    cursor:pointer;
+    border-radius:10px;
+}
+
+.card.flipped{
+    background:#00c853;
+}
