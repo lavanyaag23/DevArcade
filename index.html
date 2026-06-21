@@ -1,54 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun Games Collection</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fun Games Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="page">
+
+  <header class="hub-header">
     <h1>🎮 Fun Games Collection</h1>
-    <p>Interactive browser games built with HTML, CSS & JavaScript</p>
+    <p class="subtitle">Interactive browser games built with HTML, CSS &amp; JavaScript</p>
+  </header>
 
-    <div class="games-container">
-
-        <div class="stats">
-        <h2>📊 Collection Stats</h2>
-         <p>Games Available: 6</p>
-        </div>
-
-        <div class="card">
-            <h2>🎯 Number Guessing</h2>
-            <a href="./Number Guessing Game/index.html">Play</a>
-        </div>
-
-        <div class="card">
-            <h2>✂️ Rock Paper Scissors</h2>
-            <a href="./Rock Paper Scissors/index.html">Play</a>
-        </div>
-
-        <div class="card">
-            <h2>🐍 Snake Game</h2>
-            <a href="./Snake Game/index.html">Play</a>
-        </div>
-
-        <div class="card">
-            <h2>🧠 Memory Card</h2>
-            <a href="./Memory Card Game/index.html">Play</a>
-        </div>
-
-        <div class="card">
-            <h2>🎵 Simon Says</h2>
-            <a href="./Simon Says Game/index.html">Play</a>
-        </div>
-
-        <div class="card">
-            <h2>🔨 Whack-A-Mole</h2>
-            <a href="./Whack-A-Mole/index.html">Play</a>
-        </div>
-
+  <section class="stats-panel">
+    <h2 class="stats-title">📊 Collection Stats</h2>
+    <div class="stats-row">
+      <div class="stat-pill">
+        <span class="stat-label">Games Available</span>
+        <span class="stat-value">6</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Completed</span>
+        <span class="stat-value">6</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Latest Drop</span>
+        <span class="stat-value">Simon Says</span>
+      </div>
     </div>
+  </section>
+
+  <main class="game-grid">
+
+    <a class="game-card" href="number-guessing-game/index.html">
+      <div class="game-icon">🎯</div>
+      <h3>Number Guessing</h3>
+      <span class="game-tag tag-logic">Logic</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="rock-paper-scissors/index.html">
+      <div class="game-icon">✂️</div>
+      <h3>Rock Paper Scissors</h3>
+      <span class="game-tag tag-logic">Logic</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="snake-game/index.html">
+      <div class="game-icon">🐍</div>
+      <h3>Snake Game</h3>
+      <span class="game-tag tag-arcade">Arcade</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="memory-card-game/index.html">
+      <div class="game-icon">🧠</div>
+      <h3>Memory Card</h3>
+      <span class="game-tag tag-memory">Memory</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="simon-says/index.html">
+      <div class="game-icon">🎵</div>
+      <h3>Simon Says</h3>
+      <span class="game-tag tag-memory">Memory</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="whack-a-mole/index.html">
+      <div class="game-icon">⚡</div>
+      <h3>Whack-A-Mole</h3>
+      <span class="game-tag tag-reaction">Reaction</span>
+      <span class="play-btn">Play</span>
+    </a>
+
+  </main>
+
+  <footer class="hub-footer">
+    <p>
+      Built by <a href="https://github.com/lavanyaag23" target="_blank" rel="noopener">Lavanya Agrawal</a>
+      · <a href="https://lavanyaagrawal.vercel.app" target="_blank" rel="noopener">Portfolio</a>
+    </p>
+  </footer>
+
+</div>
 
 </body>
 </html>
