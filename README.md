@@ -1,34 +1,33 @@
-<div align="center">
-
 # 🎮 Fun Games Collection
 
-### A growing collection of interactive browser-based games — built with HTML, CSS & JavaScript
+### Interactive Browser Games & Developer Challenges Built with HTML, CSS & JavaScript
 
-[![Made with HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#)
-[![Made with CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](#)
-[![Made with JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)](#)
+[![Made with HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge\&logo=html5\&logoColor=white)](#)
+[![Made with CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge\&logo=css3\&logoColor=white)](#)
+[![Made with JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge\&logo=javascript\&logoColor=F7DF1E)](#)
 [![No Frameworks](https://img.shields.io/badge/Frameworks-None-a855f7?style=for-the-badge)](#)
 
-![Games Completed](https://img.shields.io/badge/games%20completed-5-a855f7?style=flat-square)
+![Projects](https://img.shields.io/badge/projects-8-a855f7?style=flat-square)
 ![Status](https://img.shields.io/badge/status-active-a855f7?style=flat-square)
 ![Made with](https://img.shields.io/badge/made%20with-%E2%9D%A4-c084fc?style=flat-square)
 
-</div>
-
-This project is part of my journey to strengthen frontend development, JavaScript problem-solving, and game logic implementation through hands-on projects.
-
 ---
 
-## 🚀 About the Project
+## 🚀 About The Project
 
-Fun Games Collection is a repository of web-based games ranging from beginner-friendly logic games to advanced canvas-based games. Each game is built from scratch to practice:
+Fun Games Collection is a growing collection of browser-based games and developer-focused interactive experiences built from scratch using HTML, CSS, and JavaScript.
 
-* JavaScript fundamentals
-* DOM manipulation
-* Event handling
-* Game state management
-* UI/UX design
-* Problem-solving skills
+The goal is to learn frontend development through practical projects while creating fun experiences that improve logic building, problem solving, and creativity.
+
+This repository is divided into two sections:
+
+### 🎮 Games Collection
+
+Classic browser games focused on logic, memory, reaction speed, and arcade gameplay.
+
+### 🧪 Developer Lab
+
+Coding-inspired mini games and challenges designed specifically for developers, students, and programming enthusiasts.
 
 ---
 
@@ -39,34 +38,52 @@ Fun Games Collection is a repository of web-based games ranging from beginner-fr
 * JavaScript (ES6+)
 * Canvas API
 * Web Audio API
+* Local Storage
 * Git & GitHub
 
 ---
 
-## 🎮 Games Collection
+# 🎮 Games Collection
 
-| Game                     | Category  | Status            |
-| ------------------------ | --------- | ------------------ |
-| 🎯 Number Guessing Game  | Logic     | ✅ Completed        |
-| ✂️ Rock Paper Scissors   | Logic     | ✅ Completed        |
-| 🐍 Snake Game            | Arcade    | ✅ Completed        |
-| 🧠 Memory Card Game      | Memory    | ✅ Completed        |
-| ⚡ Whack-A-Mole           | Reaction  | ✅ Completed        |
-| 🎵 Simon Says            | Memory    | ✅ Completed        |
-| 🎮 2048 Game             | Logic     | ⏳ Planned          |
-| 🧩 Sudoku Solver         | Algorithm | ⏳ Planned          |
-| 📝 Quiz Game             | MCQ Logic | ⏳ Planned          |
-| 🧱 Breakout Game         | Arcade    | ⏳ Planned          |
+| Game                    | Category  | Status      |
+| ----------------------- | --------- | ----------- |
+| 🎯 Number Guessing Game | Logic     | ✅ Completed |
+| ✂️ Rock Paper Scissors  | Logic     | ✅ Completed |
+| 🐍 Snake Game           | Arcade    | ✅ Completed |
+| 🧠 Memory Card Game     | Memory    | ✅ Completed |
+| ⚡ Whack-A-Mole          | Reaction  | ✅ Completed |
+| 🎵 Simon Says           | Memory    | ✅ Completed |
+| 🎮 2048 Game            | Logic     | ⏳ Planned   |
+| 🧱 Breakout Game        | Arcade    | ⏳ Planned   |
+| 🧩 Sudoku Solver        | Algorithm | ⏳ Planned   |
+| 📝 Quiz Game            | MCQ Logic | ⏳ Planned   |
+
+---
+
+# 🧪 Developer Lab
+
+A special section dedicated to coding-themed challenges and developer entertainment.
+
+| Challenge                   | Type             | Status      |
+| --------------------------- | ---------------- | ----------- |
+| 🐞 Bug Hunter               | Debugging        | ✅ Completed |
+| 🔥 Debug The Code           | Code Analysis    | ✅ Completed |
+| 🔮 Commit Predictor         | Developer Fun    | ⏳ Planned   |
+| ☄️ Chaos Button             | Random Fun       | ⏳ Planned   |
+| 🧠 Regex Wizard             | Coding Challenge | ⏳ Planned   |
+| ⚔️ Merge Conflict Simulator | Git Challenge    | ⏳ Planned   |
 
 ---
 
 ## 🎯 Project Goals
 
-* Build 10+ interactive web games
-* Improve JavaScript development skills
+* Build 10+ interactive games
+* Build unique developer-focused challenges
+* Improve JavaScript problem-solving skills
 * Learn practical frontend development
-* Maintain consistent GitHub contributions
+* Maintain consistent GitHub activity
 * Create portfolio-ready projects
+* Experiment with creative web experiences
 
 ---
 
@@ -77,48 +94,64 @@ Fun Games Collection is a repository of web-based games ranging from beginner-fr
 * Arrays & Objects
 * Functions & Scope
 * Game Logic Development
+* Debugging Concepts
 * Canvas API
-* Web Audio API (procedural sound effects)
-* `localStorage` (high scores & best records)
+* Local Storage
 * Responsive Design
 * Git & GitHub Workflow
 
 ---
 
-## 📈 Development Roadmap
+## 🗺️ Development Roadmap
 
-### Phase 1
+### Phase 1 — Core Games
+
 * ✅ Number Guessing Game
 * ✅ Rock Paper Scissors
 * ✅ Snake Game
 
-### Phase 2
+### Phase 2 — Interactive Games
+
 * ✅ Memory Card Game
 * ✅ Whack-A-Mole
 * ✅ Simon Says
 
-### Phase 3
+### Phase 3 — Developer Lab
+
+* ✅ Bug Hunter
+* ✅ Debug The Code
+* ⏳ Commit Predictor
+* ⏳ Chaos Button
+
+### Phase 4 — Advanced Games
+
 * 🎮 2048 Game
 * 🧱 Breakout Game
 * 🧩 Sudoku Solver
 * 📝 Quiz Game
 
-### Phase 4
-* Build a centralized **Game Hub Website**
-* Deploy all games online
-* Add leaderboards and achievements
-* Improve mobile responsiveness
+### Phase 5 — Game Hub Platform
+
+* Unified Homepage
+* Achievement System
+* Player Progress Tracking
+* Unlockable Content
+* Developer Lab Expansion
+* Online Deployment
 
 ---
 
-## 🔮 Future Enhancements
+## 🔮 Future Vision
 
-* React-based Game Hub
-* Dark/Light Theme Toggle
-* Global Leaderboards & Achievements
-* Online Multiplayer Features
+The long-term goal is to transform this project into a complete interactive platform where visitors can:
 
-> ✅ Local Storage high scores and sound effects/animations are already implemented across the completed games above.
+* Play games
+* Improve logical thinking
+* Solve coding challenges
+* Explore developer-focused mini experiences
+* Unlock new content over time
+
+Instead of being just a game collection, it will evolve into a creative playground for both gamers and developers.
 
 ---
 
@@ -126,19 +159,21 @@ Fun Games Collection is a repository of web-based games ranging from beginner-fr
 
 **Lavanya Agrawal**
 
-* B.Tech CSE Student
-* Java Developer
+* B.Tech Computer Science Engineering Student
 * Frontend Developer
+* Java Developer
 * DSA Learner
 
 ### Portfolio
+
 https://lavanyaagrawal.vercel.app/
 
 ### GitHub
+
 https://github.com/lavanyaag23
 
 ---
 
-## ⭐ Show Your Support
+## ⭐ Support
 
-If you like this project, consider giving it a ⭐ and follow my journey in software development, web development, and problem solving.
+If you like this project, consider giving it a ⭐ and follow my journey in software development, web development, problem solving, and building creative projects.
