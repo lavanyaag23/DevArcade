@@ -1,25 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bug Hunter</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bug Hunter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>🐞 Bug Hunter</h1>
+<div class="app">
+  <div class="panel">
+    <header>
+      <h1>🐞 Bug Hunter</h1>
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-label">Score</span>
+          <span class="stat-value" id="score">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Missed</span>
+          <span class="stat-value" id="missed">0/5</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Best</span>
+          <span class="stat-value" id="bestStat">--</span>
+        </div>
+      </div>
+    </header>
 
-    <div class="info">
-        <h2>Score: <span id="score">0</span></h2>
-        <h2>Missed: <span id="missed">0</span>/5</h2>
+    <div class="arena" id="arena">
+      <p class="arena-hint" id="arenaHint">Press Start to release the bugs</p>
     </div>
 
-    <div id="game-area"></div>
+    <button class="primary-btn full-width" id="startBtn">Start Game</button>
+  </div>
 
-    <button onclick="startGame()">Start Game</button>
+  <div class="win-overlay hidden" id="endOverlay">
+    <div class="win-modal">
+      <h2>🐞 Game Over</h2>
+      <p>Final Score: <span id="finalScore">0</span></p>
+      <p class="best-tag hidden" id="newBestTag">🏆 New Best!</p>
+      <button class="primary-btn" id="playAgainBtn">Play Again</button>
+    </div>
+  </div>
+</div>
 
-    <script src="script.js"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
