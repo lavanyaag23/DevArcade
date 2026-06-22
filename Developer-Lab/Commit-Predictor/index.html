@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commit Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="panel">
+
+    <header>
+      <h1>🔮 Commit Predictor</h1>
+      <p class="subtitle">Read the diff — predict the commit type</p>
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-label">Round</span>
+          <span class="stat-value" id="roundStat">1/8</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Score</span>
+          <span class="stat-value" id="scoreStat">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Streak</span>
+          <span class="stat-value" id="streakStat">🔥 0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Time</span>
+          <span class="stat-value" id="timerStat">--</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="difficulty-row">
+      <button class="diff-btn active" data-diff="easy">Easy</button>
+      <button class="diff-btn" data-diff="medium">Medium</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+    </div>
+
+    <div class="question-header hidden" id="questionHeader">
+      <span class="q-label" id="qLabel">Q1</span>
+      <span class="q-desc" id="qDesc">What conventional commit type fits this change?</span>
+    </div>
+
+    <div class="diff-panel hidden" id="diffPanel">
+      <div class="diff-bar">
+        <span class="diff-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </span>
+        <span class="diff-filename" id="diffFilename">index.js</span>
+        <span class="diff-meta" id="diffMeta">+3 -1</span>
+      </div>
+      <div class="diff-body" id="diffBody"></div>
+    </div>
+
+    <div class="options-grid hidden" id="optionsGrid"></div>
+
+    <div class="feedback-box hidden" id="feedbackBox"></div>
+
+    <div class="idle-state" id="idleState">
+      <p class="idle-text">Pick a difficulty and hit Start.<br>Read the diff, then predict the commit type.</p>
+      <div class="commit-types-legend">
+        <span class="badge badge-feat">feat</span>
+        <span class="badge badge-fix">fix</span>
+        <span class="badge badge-refactor">refactor</span>
+        <span class="badge badge-chore">chore</span>
+        <span class="badge badge-docs">docs</span>
+        <span class="badge badge-perf">perf</span>
+        <span class="badge badge-test">test</span>
+        <span class="badge badge-style">style</span>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="primary-btn" id="startBtn">Start Game</button>
+      <button class="secondary-btn" id="restartBtn" disabled>↺ Restart</button>
+    </div>
+
+  </div>
+
+  <div class="win-overlay hidden" id="endOverlay">
+    <div class="win-modal">
+      <div class="trophy-icon">🏆</div>
+      <h2>Round Complete!</h2>
+      <div class="result-grid">
+        <div class="result-item">
+          <span class="result-label">Score</span>
+          <span class="result-val" id="finalScore">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Accuracy</span>
+          <span class="result-val" id="finalAccuracy">0%</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Best Streak</span>
+          <span class="result-val" id="finalStreak">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Best Score</span>
+          <span class="result-val" id="finalBest">0</span>
+        </div>
+      </div>
+      <p class="verdict" id="verdict"></p>
+      <p class="best-tag hidden" id="newBestTag">🏆 New Best!</p>
+      <button class="primary-btn" id="playAgainBtn">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
