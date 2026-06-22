@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaos Button</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="panel">
+
+    <header>
+      <h1>☄️ Chaos Button</h1>
+      <p class="subtitle">One click. One challenge. No excuses.</p>
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-label">Survived</span>
+          <span class="stat-value" id="survivedStat">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Skipped</span>
+          <span class="stat-value" id="skippedStat">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">Best Streak</span>
+          <span class="stat-value" id="streakStat">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- category filter -->
+    <div class="filter-row" id="filterRow">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="dsa">DSA</button>
+      <button class="filter-btn" data-cat="frontend">Frontend</button>
+      <button class="filter-btn" data-cat="backend">Backend</button>
+      <button class="filter-btn" data-cat="debug">Debug</button>
+      <button class="filter-btn" data-cat="system">System</button>
+      <button class="filter-btn" data-cat="git">Git</button>
+    </div>
+
+    <!-- challenge card -->
+    <div class="challenge-card hidden" id="challengeCard">
+      <div class="card-top">
+        <span class="cat-badge" id="catBadge">DSA</span>
+        <div class="diff-dots-row">
+          <span class="diff-dot" id="d1"></span>
+          <span class="diff-dot" id="d2"></span>
+          <span class="diff-dot" id="d3"></span>
+          <span class="diff-label" id="diffLabel">Easy</span>
+        </div>
+      </div>
+      <p class="challenge-text" id="challengeText">Loading…</p>
+      <div class="challenge-footer">
+        <span class="timer-display hidden" id="timerDisplay">⏱ <span id="timerCount">30</span>s</span>
+        <div class="card-actions">
+          <button class="icon-btn" id="copyBtn" title="Copy challenge">📋</button>
+          <button class="icon-btn" id="timerToggleBtn" title="Start timer">⏱</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- idle hint -->
+    <div class="idle-hint-box" id="idleHint">
+      <p>Hit the button below to receive your challenge.</p>
+      <p class="hint-sub">Survive it, skip it, or try again.</p>
+    </div>
+
+    <!-- THE BUTTON -->
+    <button class="chaos-btn" id="chaosBtn">
+      <span class="chaos-icon">☄️</span>
+      <span class="chaos-label">UNLEASH CHAOS</span>
+    </button>
+
+    <!-- survive / skip row -->
+    <div class="outcome-row hidden" id="outcomeRow">
+      <button class="outcome-btn survive" id="surviveBtn">✅ Survived</button>
+      <button class="outcome-btn skip" id="skipBtn">💀 Too Scary</button>
+    </div>
+
+    <!-- history -->
+    <div class="history-section hidden" id="historySection">
+      <p class="history-label">Recent Chaos</p>
+      <div class="history-list" id="historyList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
