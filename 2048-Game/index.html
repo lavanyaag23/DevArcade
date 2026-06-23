@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2048</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="panel">
+
+    <header>
+      <div class="header-top">
+        <h1>2048</h1>
+        <div class="score-cluster">
+          <div class="score-box">
+            <span class="score-label">Score</span>
+            <span class="score-value" id="score">0</span>
+          </div>
+          <div class="score-box">
+            <span class="score-label">Best</span>
+            <span class="score-value" id="best">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-sub">
+        <p class="subtitle">Merge tiles to reach <strong>2048</strong></p>
+        <button class="new-game-btn" id="newGameBtn">New Game</button>
+      </div>
+    </header>
+
+    <div class="board-wrap">
+      <div class="board" id="board">
+        <div class="board-bg">
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div>
+        </div>
+        <div class="tiles-layer" id="tilesLayer"></div>
+      </div>
+    </div>
+
+    <div class="hint-row">
+      <span class="hint">Arrow keys or WASD to move</span>
+      <span class="hint">Swipe on mobile</span>
+    </div>
+
+  </div>
+
+  <!-- overlays -->
+  <div class="overlay hidden" id="winOverlay">
+    <div class="overlay-modal">
+      <div class="overlay-emoji">🎉</div>
+      <h2>You reached 2048!</h2>
+      <p>Amazing! Keep going or start fresh.</p>
+      <div class="overlay-btns">
+        <button class="primary-btn" id="keepGoingBtn">Keep Going</button>
+        <button class="secondary-btn" id="winNewBtn">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="loseOverlay">
+    <div class="overlay-modal">
+      <div class="overlay-emoji">💀</div>
+      <h2>Game Over</h2>
+      <p>Final score: <span id="finalScore">0</span></p>
+      <button class="primary-btn" id="loseNewBtn">Try Again</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
