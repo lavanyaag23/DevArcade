@@ -10,14 +10,13 @@
   --text-muted: #a597c4;
   --border: rgba(168, 85, 247, 0.25);
 
-  --tag-logic-bg: rgba(96, 165, 250, 0.15);
-  --tag-logic-text: #93c5fd;
-  --tag-arcade-bg: rgba(251, 146, 60, 0.15);
-  --tag-arcade-text: #fdba74;
-  --tag-memory-bg: rgba(244, 114, 182, 0.15);
-  --tag-memory-text: #f9a8d4;
-  --tag-reaction-bg: rgba(251, 191, 36, 0.15);
-  --tag-reaction-text: #fcd34d;
+  --tag-logic-bg:     rgba(96, 165, 250, 0.15);  --tag-logic-text:     #93c5fd;
+  --tag-arcade-bg:    rgba(251, 146, 60, 0.15);  --tag-arcade-text:    #fdba74;
+  --tag-memory-bg:    rgba(244, 114, 182, 0.15); --tag-memory-text:    #f9a8d4;
+  --tag-reaction-bg:  rgba(251, 191, 36, 0.15);  --tag-reaction-text:  #fcd34d;
+  --tag-debug-bg:     rgba(251, 113, 133, 0.15); --tag-debug-text:     #fb7185;
+  --tag-git-bg:       rgba(52, 211, 153, 0.15);  --tag-git-text:       #34d399;
+  --tag-generator-bg: rgba(192, 132, 252, 0.15); --tag-generator-text: #c084fc;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +29,7 @@ body {
     var(--bg-deep);
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
-  padding: 48px 24px;
+  padding: 48px 24px 60px;
 }
 
 .page {
@@ -38,14 +37,15 @@ body {
   margin: 0 auto;
 }
 
+/* ── HEADER ── */
 .hub-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .hub-header h1 {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(28px, 4vw, 38px);
+  font-size: clamp(28px, 4vw, 40px);
   letter-spacing: 0.5px;
   background: linear-gradient(90deg, var(--purple-bright), var(--purple), #818cf8);
   -webkit-background-clip: text;
@@ -58,17 +58,21 @@ body {
 
 @keyframes shimmer {
   0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  50%       { background-position: 100% 50%; }
 }
 
 .subtitle {
   color: var(--text-muted);
   font-size: 14px;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
+/* ── STATS PANEL ── */
 .stats-panel {
-  max-width: 480px;
-  margin: 0 auto 40px;
+  max-width: 560px;
+  margin: 0 auto 44px;
   background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-card-2) 100%);
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -119,18 +123,36 @@ body {
   color: var(--purple-bright);
 }
 
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 20px;
-  margin-bottom: 48px;
+/* ── SECTION TITLES ── */
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
 }
 
+section { margin-bottom: 44px; }
+
+.developer-lab-section .subtitle {
+  text-align: left;
+  margin: 0 0 18px;
+}
+
+/* ── GAME GRID ── */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* ── GAME CARD ── */
 .game-card {
   background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-card-2) 100%);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 28px 20px;
+  padding: 26px 18px;
   text-align: center;
   text-decoration: none;
   color: var(--text-main);
@@ -141,7 +163,7 @@ body {
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: 0 16px 32px -22px rgba(0,0,0,0.7);
+  box-shadow: 0 14px 30px -20px rgba(0,0,0,0.7);
 }
 
 .game-card::before {
@@ -157,57 +179,69 @@ body {
 .game-card:hover {
   transform: translateY(-6px);
   border-color: var(--purple);
-  box-shadow: 0 24px 44px -20px rgba(0,0,0,0.75), 0 0 36px -10px var(--violet-glow);
+  box-shadow: 0 22px 44px -18px rgba(0,0,0,0.75), 0 0 36px -10px var(--violet-glow);
 }
 
 .game-card:hover::before { opacity: 1; }
 
+/* non-link cards (coming soon) */
+div.game-card { cursor: default; opacity: 0.55; }
+div.game-card:hover { transform: none; border-color: var(--border); box-shadow: none; }
+div.game-card:hover::before { opacity: 0; }
+
 .game-icon {
-  font-size: 36px;
-  filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.35));
+  font-size: 34px;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.35));
 }
 
 .game-card h3 {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
 }
 
+/* ── TAGS ── */
 .game-tag {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   padding: 4px 10px;
   border-radius: 999px;
 }
 
-.tag-logic { background: var(--tag-logic-bg); color: var(--tag-logic-text); }
-.tag-arcade { background: var(--tag-arcade-bg); color: var(--tag-arcade-text); }
-.tag-memory { background: var(--tag-memory-bg); color: var(--tag-memory-text); }
-.tag-reaction { background: var(--tag-reaction-bg); color: var(--tag-reaction-text); }
+.tag-logic     { background: var(--tag-logic-bg);     color: var(--tag-logic-text); }
+.tag-arcade    { background: var(--tag-arcade-bg);    color: var(--tag-arcade-text); }
+.tag-memory    { background: var(--tag-memory-bg);    color: var(--tag-memory-text); }
+.tag-reaction  { background: var(--tag-reaction-bg);  color: var(--tag-reaction-text); }
+.tag-debug     { background: var(--tag-debug-bg);     color: var(--tag-debug-text); }
+.tag-git       { background: var(--tag-git-bg);       color: var(--tag-git-text); }
+.tag-generator { background: var(--tag-generator-bg); color: var(--tag-generator-text); }
 
+/* ── PLAY BUTTON ── */
 .play-btn {
-  margin-top: 6px;
+  margin-top: 4px;
   background: linear-gradient(135deg, var(--purple), var(--purple-dim));
   color: white;
   font-weight: 700;
   font-size: 12px;
-  padding: 8px 22px;
+  padding: 7px 22px;
   border-radius: 10px;
-  box-shadow: 0 0 18px -4px var(--violet-glow);
+  box-shadow: 0 0 16px -4px var(--violet-glow);
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .game-card:hover .play-btn {
   transform: translateY(-1px);
-  box-shadow: 0 0 24px -2px var(--violet-glow);
+  box-shadow: 0 0 22px -2px var(--violet-glow);
 }
 
+/* ── FOOTER ── */
 .hub-footer {
   text-align: center;
   color: var(--text-muted);
   font-size: 13px;
+  margin-top: 8px;
 }
 
 .hub-footer a {
@@ -218,6 +252,8 @@ body {
 
 .hub-footer a:hover { text-decoration: underline; }
 
-@media (max-width: 480px) {
+/* ── RESPONSIVE ── */
+@media (max-width: 500px) {
   .game-grid { grid-template-columns: repeat(2, 1fr); }
+  .hub-header h1 { font-size: 24px; }
 }
