@@ -14,9 +14,13 @@
 
   <header class="hub-header">
     <h1>🎮 Fun Games Collection</h1>
+    <button id="themeToggle" class="theme-btn">
+    🌙
+    </button>
     <p class="subtitle">
       Interactive browser games and developer challenges built with HTML, CSS &amp; JavaScript
     </p>
+    
   </header>
 
   <section class="stats-panel">
@@ -41,55 +45,82 @@
     </div>
   </section>
 
+  <section class="search-section">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Search games or developer challenges..."
+    >
+
+</section>
+
+<section class="filter-section">
+
+    <button class="filter-btn active" data-filter="all">All</button>
+
+    <button class="filter-btn" data-filter="games">Games</button>
+
+    <button class="filter-btn" data-filter="developer">Developer Lab</button>
+
+    <button class="filter-btn" data-filter="logic">Logic</button>
+
+    <button class="filter-btn" data-filter="arcade">Arcade</button>
+
+    <button class="filter-btn" data-filter="memory">Memory</button>
+
+</section>
+
   <!-- ── GAMES ── -->
   <section>
     <h2 class="section-title">🎮 Games</h2>
 
     <main class="game-grid">
 
-      <a class="game-card" href="Number-Guessing-Game/">
+      <a class="game-card" href="Number-Guessing-Game/" data-name="number guessing logic" data-category="games logic">
         <div class="game-icon">🎯</div>
         <h3>Number Guessing</h3>
         <span class="game-tag tag-logic">Logic</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Rock-Paper-Scissors/">
+      <a class="game-card" href="Rock-Paper-Scissors/" data-name="rock paper scissors logic" data-category="games logic">
         <div class="game-icon">✂️</div>
         <h3>Rock Paper Scissors</h3>
         <span class="game-tag tag-logic">Logic</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Snake-Game/">
+      <a class="game-card" href="Snake-Game/" data-name="snake game arcade"
+                data-category="games arcade">
         <div class="game-icon">🐍</div>
         <h3>Snake Game</h3>
         <span class="game-tag tag-arcade">Arcade</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Memory-Card-Game/">
+      <a class="game-card" href="Memory-Card-Game/" data-name="memory card" data-category="games memory">
         <div class="game-icon">🧠</div>
         <h3>Memory Card</h3>
         <span class="game-tag tag-memory">Memory</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Simon-Says-Game/">
+      <a class="game-card" href="Simon-Says-Game/" data-name="simon says" data-category="games memory">
         <div class="game-icon">🎵</div>
         <h3>Simon Says</h3>
         <span class="game-tag tag-memory">Memory</span>
         <span class="play-btn">Play</span>
       </a>
       
-      <a class="game-card" href="Whack-A-Mole/">
+      <a class="game-card" href="Whack-A-Mole/" data-name="whack a mole" data-category="games arcade">
        <div class="game-icon">⚡</div>
        <h3>Whack-A-Mole</h3>
        <span class="game-tag tag-reaction">Reaction</span>
        <span class="play-btn">Play</span>
        </a>
 
-      <a class="game-card" href="2048-Game/">
+      <a class="game-card" href="2048-Game/" data-name="2048 game logic" data-category="games logic">
         <div class="game-icon">🎮</div>
         <h3>2048 Game</h3>
         <span class="game-tag tag-logic">Logic</span>
@@ -106,42 +137,42 @@
 
     <div class="game-grid">
 
-      <a class="game-card" href="Developer-Lab/Bug-Hunter/index.html">
+      <a class="game-card" href="Developer-Lab/Bug-Hunter/index.html" data-name="bug hunter" data-category="developer">
         <div class="game-icon">🐞</div>
         <h3>Bug Hunter</h3>
         <span class="game-tag tag-debug">Arcade Debug</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Developer-Lab/Debug-The-Code/index.html">
+      <a class="game-card" href="Developer-Lab/Debug-The-Code/index.html" data-name="debug the code" data-category="developer">
         <div class="game-icon">🐛</div>
         <h3>Debug The Code</h3>
         <span class="game-tag tag-debug">Code Analysis</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Developer-Lab/Commit-Predictor/index.html">
+      <a class="game-card" href="Developer-Lab/Commit-Predictor/index.html" data-name="commit predictor" data-category="developer">
         <div class="game-icon">🔮</div>
         <h3>Commit Predictor</h3>
         <span class="game-tag tag-git">Git Challenge</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Developer-Lab/Chaos-Button/index.html">
+      <a class="game-card" href="Developer-Lab/Chaos-Button/index.html" data-name="chaos button" data-category="developer">
         <div class="game-icon">☄️</div>
         <h3>Chaos Button</h3>
         <span class="game-tag tag-reaction">Dev Challenges</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Developer-Lab/Cosmic-Coder-Generator/index.html">
+      <a class="game-card" href="Developer-Lab/Cosmic-Coder-Generator/index.html" data-name="cosmic coder" data-category="developer">
         <div class="game-icon">🌌</div>
         <h3>Cosmic Coder</h3>
         <span class="game-tag tag-generator">Generator</span>
         <span class="play-btn">Play</span>
       </a>
 
-      <a class="game-card" href="Developer-Lab/Developer-Destiny/index.html">
+      <a class="game-card" href="Developer-Lab/Developer-Destiny/index.html" data-name="developer destiny" data-category="developer">
         <div class="game-icon">🔥</div>
         <h3>Developer Destiny</h3>
         <span class="game-tag tag-generator">Generator</span>
@@ -161,5 +192,6 @@
   </footer>
 
 </div>
+<script src="script.js"></script>
 </body>
 </html>
