@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎮 Fun Games Collection
+# 🎮 CodeQuest Arena
 
-### Interactive Browser Games & Developer Challenges — Built with HTML, CSS & JavaScript
+### Level up your coding journey through interactive browser games, developer challenges, achievements, and gamified learning.
 
 [![Made with HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](#)
 [![Made with CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](#)
@@ -23,7 +23,7 @@
 
 ## 🌐 Live Demo
 
-https://fun-games-collection.vercel.app
+https://codequest-arena-lavanya.vercel.app/
 
 
 </div>
