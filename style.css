@@ -489,3 +489,32 @@ button { font-family: var(--sans); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.hero-actions{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+.hero-btn{
+    padding:14px 24px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.hero-btn.primary{
+    background:linear-gradient(135deg,var(--neon),#8b5cf6);
+    color:white;
+}
+
+.hero-btn.secondary{
+    border:1px solid var(--border2);
+    background:var(--surface);
+}
+
+.hero-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 15px 30px var(--neon-glow);
+}
