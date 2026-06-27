@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎮 Fun Games Collection
+# 🎮 CodeQuest Arena
 
 ### Interactive Browser Games & Developer Challenges — Built with HTML, CSS & JavaScript
 
