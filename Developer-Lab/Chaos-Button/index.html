@@ -13,24 +13,42 @@
 <div class="app">
   <div class="panel">
 
-    <header>
-      <h1>☄️ Chaos Button</h1>
-      <p class="subtitle">One click. One challenge. No excuses.</p>
-      <div class="stats-row">
-        <div class="stat-pill">
-          <span class="stat-label">Survived</span>
-          <span class="stat-value" id="survivedStat">0</span>
+    <header class="hero">
+
+    <div class="hero-badge">
+        <span>☄️ Developer Challenge</span>
+    </div>
+
+    <h1>
+        Chaos
+        <span>Button</span>
+    </h1>
+
+    <p class="hero-subtitle">
+        Click once and receive a random coding challenge.
+        Improve DSA, Frontend, Git, Debugging and System Design through daily chaos.
+    </p>
+
+    <div class="hero-stats">
+
+        <div class="stat-card">
+            <div class="stat-number" id="survivedStat">0</div>
+            <div class="stat-text">Challenges Completed</div>
         </div>
-        <div class="stat-pill">
-          <span class="stat-label">Skipped</span>
-          <span class="stat-value" id="skippedStat">0</span>
+
+        <div class="stat-card">
+            <div class="stat-number" id="skippedStat">0</div>
+            <div class="stat-text">Skipped</div>
         </div>
-        <div class="stat-pill">
-          <span class="stat-label">Best Streak</span>
-          <span class="stat-value" id="streakStat">0</span>
+
+        <div class="stat-card">
+            <div class="stat-number" id="streakStat">0</div>
+            <div class="stat-text">Best Streak</div>
         </div>
-      </div>
-    </header>
+
+    </div>
+
+</header>
 
     <!-- category filter -->
     <div class="filter-row" id="filterRow">
